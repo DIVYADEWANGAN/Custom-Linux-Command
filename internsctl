@@ -8,35 +8,24 @@ show_version() {
     echo "internsctl version $VERSION"
 }
 
-# Function to create a new user
-create_user() {
+# Function to get information about a file
+file_getinfo() {
     if [ -z "$1" ]; then
-        echo "Error: Username not provided. Usage: internsctl user create <username>"
+        echo "Error: File name not provided. Usage: internsctl file getinfo <file-name>"
         exit 1
     fi
 
-    username="$1"
+    filename="$1"
 
-    # Check if the user already exists
-    if id "$username" &>/dev/null; then
-        echo "Error: User '$username' already exists."
+    if [ ! -e "$filename" ]; then
+        echo "Error: File '$filename' not found."
         exit 1
     fi
 
-    # Create the user with a home directory
-    useradd -m "$username"
+    # Get file information
+    file_info=$(stat --format="File: %n%nAccess: %A%nSize(B): %s%nOwner: %U" "$filename")
 
-    echo "User '$username' created successfully."
-}
-
-# Function to list all users
-list_users() {
-    cut -d: -f1 /etc/passwd
-}
-
-# Function to list users with sudo permissions
-list_sudo_users() {
-    getent group sudo | cut -d: -f4 | tr ',' '\n'
+    echo "$file_info"
 }
 
 # Process command line options
@@ -44,29 +33,20 @@ case "$1" in
     --help)
         echo "Usage: internsctl [options]"
         echo "Options:"
-        echo "  --help              Display help and examples"
-        echo "  --version           Display command version"
-        echo "  user create <username>       Create a new user"
-        echo "  user list                    List all users"
-        echo "  user list --sudo-only       List users with sudo permissions"
+        echo "  --help                   Display help and examples"
+        echo "  --version                Display command version"
+        echo "  file getinfo <file-name> Get information about a file"
         ;;
     --version)
         show_version
         ;;
-    user)
+    file)
         case "$2" in
-            create)
-                create_user "$3"
-                ;;
-            list)
-                if [ "$3" == "--sudo-only" ]; then
-                    list_sudo_users
-                else
-                    list_users
-                fi
+            getinfo)
+                file_getinfo "$3"
                 ;;
             *)
-                echo "Error: Unknown user subcommand. Use 'internsctl --help' for usage."
+                echo "Error: Unknown file subcommand. Use 'internsctl --help' for usage."
                 exit 1
                 ;;
         esac
