@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Define the command version
+VERSION="v0.1.0"
+
+# Function to display the manual page
+show_manual() {
+    echo "internsctl - Custom Linux Command"
+    echo "Usage: internsctl [options]"
+    echo ""
+    echo "Options:"
+    echo "  --help     Display help and examples"
+    echo "  --version  Display command version"
+}
+
+# Function to display help and examples
+show_help() {
+    echo "Usage: internsctl [options]"
+    echo ""
+    echo "Options:"
+    echo "  --help     Display help and examples"
+    echo "  --version  Display command version"
+    echo ""
+    echo "Examples:"
+    echo "  internsctl --help"
+    echo "  internsctl --version"
+}
+
+# Process command line options
+case "$1" in
+    --help)
+        show_help
+        ;;
+    --version)
+        echo "internsctl $VERSION"
+        ;;
+    *)
+        echo "Error: Unknown option. Use 'internsctl --help' for usage."
+        exit 1
+        ;;
+esac
+
+exit 0
